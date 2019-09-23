@@ -1,2 +1,2 @@
 # Lantern
-Suite of codes used for the Lantern program. Test-mac!
+Suite of codes used for the Lantern program. Test-branching!
