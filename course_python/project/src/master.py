@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 
 import os
-from inspect_data import Inspect_Data
+from merge_data import Merge_Data
 
 class Master(object):
     """
     Code description: main script to call routines to analyse data from the
     Lantern institute.
     """
-    def __init__(self, run_inspect):
+    def __init__(self, preprocess_data):
         
-        if run_inspect:
-            Inspect_Data()
+        if preprocess_data:
+            Merge_Data()
 
 if __name__ == '__main__':
-    Master(run_inspect = True)
+    Master(preprocess_data=True)
 
 
