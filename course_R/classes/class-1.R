@@ -1,4 +1,4 @@
-#R script for the second class.
+#R script for the first class.
 
 #Just some test to familiarize ourselvess with R functions.
 A = seq(-10,10,2)
