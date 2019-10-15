@@ -1,0 +1,48 @@
+Hello there,
+
+I'll give you a warm up exercise and the first part of the actual data 
+set containing person's sleep data. This is collected from some Samsung 
+Health app.
+
+You need to start  byexploring, understanding and cleaning the data 
+first. Then continue analyzing it and making interesting discoveries and 
+conclusions.
+
+It is in the attached jupyter notebook.
+
+In addition to the sleep data I gave you already (and yes, work with the 
+same data file), here are the extra files:
+
+
+     - Exercise: https://www.dropbox.com/s/swvtjxw2ilcn4pl/exercise.csv?dl=0
+
+     - Heart rate: 
+https://www.dropbox.com/s/7h2sphkvf4cjbsh/heart_rate.csv?dl=0
+
+     - Step Count: 
+https://www.dropbox.com/s/4edk6mwwsb6dogp/step_co7unt.csv?dl=0
+
+     - Floors climbed: 
+https://www.dropbox.com/s/wyde3yf57gurp1v/floors_climbed.csv?dl=0
+
+
+     A few points:
+
+         - Try to investigate each data set individually first. Dig into 
+each of them as much as you can.
+
+         - When happy with individual analysis, try to connect the data 
+sets. Go simple first. say, create a date key and include the aggregated 
+value for some of the quantities. For example, total steps per day, 
+total floors climbed per day etc.
+
+          - Then try to create a more granular key that allows you to 
+look at the events with more accuracy.
+
+        - As I said, there is not one unique way of doing this. What I'd 
+like to see is your (painful) journey of investigation and discovery !
+
+     - You can use whatever library you like. "seaborn" is a useful 
+plotting library : https://seaborn.pydata.org/
+
+Have fun !
