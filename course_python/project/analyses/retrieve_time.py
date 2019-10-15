@@ -9,7 +9,7 @@ class Retrieve_Timestamps(object):
     """
     Description:
     ------------
-    Given a list of time strings, convert it datetime object which are in the
+    Given a list of time strings, convert it to a datetime object which is in the
     local timezone.
     """        
     def __init__(self, target, tzone, t_measurement, inp_format, time_format):
