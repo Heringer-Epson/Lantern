@@ -38,6 +38,18 @@ nums = sapply(worms,is.numeric)
 #print(nums)
 #print(worms[nums])
 #print(list(worms$Vegetation))
-aggregate(worms[,nums],list(worms$Vegetation),median)
-aggregate(worms[,nums],list(worms$Vegetation=="Orchard"),median)
+#aggregate(worms[,nums],list(worms$Vegetation),median)
+#aggregate(worms[,nums],list(worms$Vegetation=="Orchard"),median)
 #help(aggregate)
+
+#Assignment 3:
+#Find the average density of worms for grassland and meadows, whose
+#is greate than 2.5 and soil.pH is greater than 3.5.
+
+worms_reduced = worms[
+  worms$Area>3 & worms$Soil.pH>3.5
+  & (worms$Vegetation=='Grassland' | worms$Vegetation=='Meadow'),]
+print(mean(worms_reduced$Worm.density))
+
+
+
