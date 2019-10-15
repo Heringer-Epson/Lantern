@@ -1,5 +1,6 @@
 #Homework 1 –read about and practice matrix operations in R 
 #Tutorial: http://www.philender.com/courses/multivariate/notes/matr.html
+#https://www.statmethods.net/advstats/matrix.html
 
 #Define matrices.
 
