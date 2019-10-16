@@ -1,0 +1,135 @@
+- Starting With Pandas : https://aliojjati.github.io/Nu-Python/11-starting-with-data/
+
+- Indexing, Slicing and Subsetting DataFrames in Python: https://aliojjati.github.io/Nu-Python/12-index-slice-subset/
+
+- Data Types and Formats :   https://aliojjati.github.io/Nu-Python/13-data-types-and-format/
+
+Create a jupyter notebook named "Session_4_assignment_your-name.ipynb" and perform the following. Separate each part with a Markdown comment as we did in the class. Send your file to me by email before next class.  
+
+
+- Do the "Challenge - Plots" on "Starting With Pandas" page
+
+- Do the "Challenge - Putting it all together" on  "Indexing, Slicing and Subsetting DataFrames in Python" page  
+
+- Titanic data :
+Titanic data is a standard example in Machine Learning. The first step is to analyze the data and get a general understanding of what we are dealing with. This is what we want to do here :
+
+
+- Download the data from :
+
+https://www.dropbox.com/s/0xa468pir0o2882/Titanic_data.csv?dl=0
+
+
+- Read the data into Python as a Pandas dataframe
+
+-Start exploring data as you see fit and start making statements based on your findings. You can do the following, for example:
+
+- Get a summary of the data
+
+- How many data points ? What attributes ?
+
+- How many non-null values for each attribute ?
+
+- Use "df.drop" to remove any attribute you think is irrelevant to the data analysis
+
+- Use "df.dropna()" to remove NAN values from the remaining columns
+
+- Make a plot of the following :
+
+- count of survives/not-survived
+
+- count of survivor
+
+- Age Distribution withinage distribution with subclass classes
+
+- Passengers per boarding location
+
+-"Who Survived? with respect to Gender, (raw value counts) "#
+
+-Who Survived proportionally? with respect to Gender
+
+
+- Bonus: Do your own data discovery and surprise us !
+
+
+
+- "Movie rating data":
+
+- Read the ratings dataset from : 'http://files.grouplens.org/datasets/movielens/ml-100k/u.data' . Columns are ['user_id', 'movie_id', 'rating', 'unix_timestamp']
+
+- Read the user data from : http://files.grouplens.org/datasets/movielens/ml-100k/u.user . Columns are : ['user_id', 'age', 'sex', 'occupation', 'zip_code']
+
+
+- Read Movie details data from : http://files.grouplens.org/datasets/movielens/ml-100k/u.item  Columns are : ['movie_id', 'title', 'release_date',
+
+            'video_release_date', 'imdb_url']
+
+
+- show users aged 40 and male
+
+- show the mean age of female programmers
+
+- Find Diligent Users
+
+-get the average rating per movie
+
+- advanced: get the movie titles with the highest average rating
+
+- get the average rating per user
+
+- advanced: list all occupations and if they are male or female dominant
+
+
+
+
+(For fun:) - Scraping with Python:  
+The following Python code just defines a url as a string and then reads the data from that url using the urllib library. If you uncomment the print command you see that we got the whole HTML content of the page into the string variable source.
+
+
+You need to import necessary libraries to run this !
+
+
+Is the word 'Alice' mentioned on the beautiful soup homepage?
+
+How often does the word 'Soup' occur on the site?
+
+hint: use .count()
+
+
+At what index occurs the substring 'alien video games' ?
+
+hint: use .find()
+
+
+This is a simple example of how html pages are scraped for information. That could be very useful for tweet sentiment analysis, advertisement etc.  Here is a minimal webpage defined in HTML tags.
+
+"""<!DOCTYPE html>
+
+<html>
+
+<head>    
+
+<title>This is a title</title>  
+
+</head>  
+
+
+<body>    
+
+<h2> Test </h2>    
+
+<p>Hello world!</p>  
+
+</body>
+
+</html>"""
+
+
+
+The root tag is <html> and then you have the <head> tag. This part of the page typically includes the title of the page and might also have other meta information like the author or keywords that are important for search engines. The <body> tag marks the actual content of the page. You can play around with the <h2> tag trying different header levels. They range from 1 to 6.
+
+
+Health Data Project, part 1: Sleep data  
+
+This is the first part of a multi-part project where you analyze a bunch of health-related data sets. Download this notebook and follow the steps :
+https://www.dropbox.com/s/hwktjpb7movm5zk/Sleep%20Data.ipynb?dl=0

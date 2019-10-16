@@ -40,7 +40,8 @@ class Retrieve_Timestamps(object):
         from_zone = tz.gettz(self.t_measurement)
         to_zone = [tz.gettz(t_off) for t_off in self.tzone]
         
-        self.out = np.array([_t.replace(tzinfo=from_zone).astimezone(_to_zone)
+        #The timezone information below is erased for compatibility with pandas resample.
+        self.out = np.array([_t.replace(tzinfo=from_zone).astimezone(_to_zone).replace(tzinfo=None)
                             for (_t,_to_zone) in zip(self.time_obj,to_zone)])
 
 
