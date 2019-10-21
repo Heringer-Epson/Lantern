@@ -4,7 +4,7 @@
 
 2) Check data for gaps, sudden jumps and other data quality issues
 
-3) Plot time series of IRs and their 1-day and 25-day increments using either xtspackage
+3) Plot time series of interbank rates (IRs) and their 1-day and 25-day increments using either xtspackage
 
 4) Plot histogram of IRs and their 1-day and 25-day increments, and fit several distributions
 to the histrograms. Which distributions does provide the best fit?
