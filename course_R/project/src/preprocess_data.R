@@ -13,13 +13,13 @@ get_data = function(fpath){
     data = read_csv(fpath, col_names = c('date', 'y'), skip=1,
                     col_types = cols(.default = "d", date = "D"))
     data$date = as.Date(data$date)
-    data$y = na.approx(data$y)
+    #data$y = na.approx(data$y)
     return(data[1:30,])
     #return(data)
 }
 
 clean_NA = function(data){
-    data = data[complete.cases(data[ ,1]),]
+    data = data[complete.cases(data[ ,1:2]),]
     return(data)
 }
 
@@ -36,20 +36,42 @@ data_smoother = function(y){
 #' @param y An array of values.
 #' @return The smoothed values of y.
 remove_spikes = function(data){
-    diff = data$y - data$y_smoothed
-    simple_std = sqrt(mean(diff**2))
-    cond = diff <= 5*simple_std
+    difference = data$y - data$y_smoothed
+    simple_std = sqrt(mean(difference**2))
+    cond = difference <= 5*simple_std
     return(data[cond,])
 }
 
-#' make dataframe an xts (time-series) object.
+#' make dataframe an xts (time-series) object. Note that
+#' xts will convert all columns to character. To prevent this,
+#' first create the time series object, then merge y column.
 #'
 #' @param data A dataframe with a time column.
 #' @return an xts object. 
 make_xts_object = function(data){
-    data = xts(data, order.by=data$date)
+    aux = xts(data$date, order.by=data$date)
+    data = merge(aux, data$y)
     data = data[, 2, drop = FALSE]
+    colnames(data) = c('y')
     return(data)
+}
+
+compute_25d_chunks = function(data){
+
+    chunk = 5
+    n = nrow(data)
+    r = rep(1:ceiling(n/chunk),each=chunk)[1:n]
+    d = split(data,r)
+    print(d[1])
+    #print(data)
+    #Use for loop.
+    #print(nrow(data) %% 25)
+    #print(data[5:])
+    
+    #print(nrow(data) %/% 5)
+    #map.split <- split(data, nrow(data) %/% 5)
+    #print(lapply(map.split, nrow))
+    #print(length(map.split))
 }
 
 #' Compute increments in values.
@@ -57,8 +79,9 @@ make_xts_object = function(data){
 #' @param data An xts object.
 #' @return an xts object with additional columns for time increments. 
 compute_increment = function(data){
-    print(data)
-    print(lag(data, k = +1, na.pad = TRUE)) #laggin by index, not time.
+    #print(data)
+    #data_lagged = lag(data, k = +1, na.pad = TRUE) #laggin by index, not time.
+    print(diff(data,lag=1,differences=1))
     #print(diff(data,lag=1,differences=1))
     return(data)
 }
@@ -75,7 +98,8 @@ run_preprocessing = function(fpath){
     M$y_smoothed = data_smoother(M$y)
     M = remove_spikes(M)
     M = make_xts_object(M)
-    M = compute_increment(M)
+    compute_25d_chunks(M)
+    #M = compute_increment(M)
     return(M)
 }
 
