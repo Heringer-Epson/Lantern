@@ -14,7 +14,9 @@ get_data = function(fpath){
                     col_types = cols(.default = "d", date = "D"))
     data$date = as.Date(data$date)
     #data$y = na.approx(data$y)
-    return(data[1:30,])
+    #return(data[1:30,])
+    #return(data[nrow(data):1,])
+    return(data[30:1,])
     #return(data)
 }
 
@@ -42,6 +44,27 @@ remove_spikes = function(data){
     return(data[cond,])
 }
 
+#' Make as new dataframe where the median value of the IR (y)
+#' is stored for chunks of 25d. The stored date is the last (most
+#' recent) one.
+#'
+#' @param data A dataframe with a date and y columns.
+#' @return a reduced dataframe. 
+compute_25d_chunks = function(data){
+    out = list(date=c(), y=c())
+    chunk = 5
+    n = nrow(data)
+    r = rep(1:ceiling(n/chunk),each=chunk)[1:n]
+    d = split(data,r)
+    for (i in d){
+        #out$date = c(out$date, as.character(tail(i$date, 1)))
+        out$date = c(out$date, tail(i$date, 1))
+        out$y = c(out$y, median(i$y))
+    }
+    out$date = as.Date(out$date, format="%Y-%m-%d")
+    return(out)
+}
+
 #' make dataframe an xts (time-series) object. Note that
 #' xts will convert all columns to character. To prevent this,
 #' first create the time series object, then merge y column.
@@ -56,34 +79,12 @@ make_xts_object = function(data){
     return(data)
 }
 
-compute_25d_chunks = function(data){
-
-    chunk = 5
-    n = nrow(data)
-    r = rep(1:ceiling(n/chunk),each=chunk)[1:n]
-    d = split(data,r)
-    print(d[1])
-    #print(data)
-    #Use for loop.
-    #print(nrow(data) %% 25)
-    #print(data[5:])
-    
-    #print(nrow(data) %/% 5)
-    #map.split <- split(data, nrow(data) %/% 5)
-    #print(lapply(map.split, nrow))
-    #print(length(map.split))
-}
-
 #' Compute increments in values.
 #'
 #' @param data An xts object.
 #' @return an xts object with additional columns for time increments. 
 compute_increment = function(data){
-    #print(data)
-    #data_lagged = lag(data, k = +1, na.pad = TRUE) #laggin by index, not time.
-    print(diff(data,lag=1,differences=1))
-    #print(diff(data,lag=1,differences=1))
-    return(data)
+    return(diff(data,lag=1,differences=1))
 }
 
 #diff(xts5,lag=12,differences=1) 
@@ -97,10 +98,16 @@ run_preprocessing = function(fpath){
     M = clean_NA(M)
     M$y_smoothed = data_smoother(M$y)
     M = remove_spikes(M)
-    M = make_xts_object(M)
-    compute_25d_chunks(M)
-    #M = compute_increment(M)
-    return(M)
+    
+    M_1 = M
+    M_25 = compute_25d_chunks(M)
+    
+    M_1 = make_xts_object(M_1)
+    M_1 = compute_increment(M_1)
+    
+    M_25 = make_xts_object(M_25)
+    M_25 = compute_increment(M_25)
+    return(list('1d'=M, '25d'=M_25))
 }
 
 
