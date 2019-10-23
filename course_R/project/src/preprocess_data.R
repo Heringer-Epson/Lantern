@@ -2,7 +2,6 @@ library("signal")
 library("readr")
 library("zoo")
 library("xts")
-options(dplyr.print_max = 30)
 
 #' Retrieve data from the file passed as input. NA are given
 #' an approximate value using na.approx from the zoo library.
@@ -13,11 +12,7 @@ get_data = function(fpath){
     data = read_csv(fpath, col_names = c('date', 'y'), skip=1,
                     col_types = cols(.default = "d", date = "D"))
     data$date = as.Date(data$date)
-    #data$y = na.approx(data$y)
-    #return(data[1:30,])
-    #return(data[nrow(data):1,])
-    return(data[30:1,])
-    #return(data)
+    return(data[nrow(data):1,])
 }
 
 clean_NA = function(data){
@@ -52,12 +47,11 @@ remove_spikes = function(data){
 #' @return a reduced dataframe. 
 compute_25d_chunks = function(data){
     out = list(date=c(), y=c())
-    chunk = 5
+    chunk = 25
     n = nrow(data)
     r = rep(1:ceiling(n/chunk),each=chunk)[1:n]
     d = split(data,r)
     for (i in d){
-        #out$date = c(out$date, as.character(tail(i$date, 1)))
         out$date = c(out$date, tail(i$date, 1))
         out$y = c(out$y, median(i$y))
     }
@@ -79,6 +73,15 @@ make_xts_object = function(data){
     return(data)
 }
 
+#' Trim input dictionary to accept only values in the input time range.
+#'
+#' @param data An xts object.
+#' @param time_period A string containg a time range. e.g. '1986/1986-02'.
+#' @return a reduced dataframe. 
+trim_date_range = function(data, time_period){
+    return(data[time_period])        
+}
+
 #' Compute increments in values.
 #'
 #' @param data An xts object.
@@ -87,13 +90,12 @@ compute_increment = function(data){
     return(diff(data,lag=1,differences=1))
 }
 
-#diff(xts5,lag=12,differences=1) 
-
 #' Master function to call data processing functions above.
 #'
 #' @param fpath A string containg the full path to file.
+#' @param time_period A string containg a time range. e.g. '1986/1986-02'.
 #' @return a post-processed list. 
-run_preprocessing = function(fpath){
+run_preprocessing = function(fpath, time_period){
     M = get_data(fpath)
     M = clean_NA(M)
     M$y_smoothed = data_smoother(M$y)
@@ -103,13 +105,15 @@ run_preprocessing = function(fpath){
     M_25 = compute_25d_chunks(M)
     
     M_1 = make_xts_object(M_1)
-    M_1 = compute_increment(M_1)
+    M_1 = trim_date_range(M_1, time_period)
+    M_1$y_increm = compute_increment(M_1)
     
     M_25 = make_xts_object(M_25)
-    M_25 = compute_increment(M_25)
+    M_25 = trim_date_range(M_25, time_period)
+    M_25$y_increm = compute_increment(M_25)
     return(list('1d'=M, '25d'=M_25))
 }
 
 
 
-
+#https://www.datacamp.com/community/blog/r-xts-cheat-sheet
