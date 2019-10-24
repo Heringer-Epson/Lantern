@@ -53,7 +53,7 @@ compute_25d_chunks = function(data){
     d = split(data,r)
     for (i in d){
         out$date = c(out$date, tail(i$date, 1))
-        out$y = c(out$y, median(i$y))
+        out$y = c(out$y, mean(i$y))
     }
     out$date = as.Date(out$date, format="%Y-%m-%d")
     return(out)
@@ -101,17 +101,18 @@ run_preprocessing = function(fpath, time_period){
     M$y_smoothed = data_smoother(M$y)
     M = remove_spikes(M)
     
-    M_1 = M
-    M_25 = compute_25d_chunks(M)
     
+    M_1 = M
     M_1 = make_xts_object(M_1)
     M_1 = trim_date_range(M_1, time_period)
     M_1$y_increm = compute_increment(M_1)
     
+    
+    M_25 = compute_25d_chunks(M)
     M_25 = make_xts_object(M_25)
     M_25 = trim_date_range(M_25, time_period)
     M_25$y_increm = compute_increment(M_25)
-    return(list('1d'=M, '25d'=M_25))
+    return(list('d1'=M_1, 'd25'=M_25))
 }
 
 
