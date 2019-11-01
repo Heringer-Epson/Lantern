@@ -2,6 +2,7 @@
 
 import os
 
+from initialize_run import Init_Run
 from preprocess_data import Preproc_Data
 from transform_data import Transform_Data
 from plot_ir import Plot_Ir
@@ -36,11 +37,11 @@ class Master(object):
     def __init__(self, tenor='1m', curr='USD', t_ival=None, incr=2,
                  application='simple_diff'):
        
+        outdir = Init_Run(tenor, curr, incr, application).run_init()
         data = Preproc_Data(tenor, curr, t_ival).run_preproc_data()
         data = Transform_Data(data, incr, application).run_transform_data()
-        Plot_Ir(data).make_plot()
+        Plot_Ir(data, application, outdir).make_plot()
         
-        #self.incr,
         #print(data.head(n=10))
         
         
@@ -49,3 +50,4 @@ class Master(object):
        
 if __name__ == '__main__':
     Master(t_ival=['2017/01/01', '2018/06/01'])
+    #Master(t_ival=['2011/01/01', '2018/06/01'])
