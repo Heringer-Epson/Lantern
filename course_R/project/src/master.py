@@ -51,5 +51,5 @@ class Master(object):
 
        
 if __name__ == '__main__':
-    #Master(t_ival=['2017/01/01', '2018/06/01'])
-    Master(t_ival=['2012/01/01', '2018/06/01'], application='log_ratio')
+    Master(t_ival=['2017/01/01', '2018/06/01'])
+    #Master(t_ival=['2012/01/01', '2018/06/01'], application='log_ratio')

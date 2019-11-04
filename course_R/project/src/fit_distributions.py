@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 
 import os
+import math
 import numpy as np
 import pandas as pd
 from scipy import stats
+from itertools import cycle
+import scipy.stats
 
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
@@ -14,6 +17,9 @@ mpl.rcParams['mathtext.fontset'] = 'stix'
 mpl.rcParams['mathtext.fontset'] = 'stix'
 mpl.rcParams['font.family'] = 'STIXGeneral'
 fs = 24.
+c = cycle(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33',
+           '#a65628','#f781bf'])
+ls = cycle(['-', '-.', '--', ':'])
 
 class Fit_Distr(object):
     """
@@ -43,15 +49,13 @@ class Fit_Distr(object):
 
     def plot_histogram(self):
         aux = self.ax.hist(
-          self.y, bins=30, normed=True, histtype='stepfilled', alpha=0.4)
+          self.y, bins=30, normed=True, histtype='stepfilled', alpha=0.7,
+          color='grey')
         
         #Use range from plotted histogram to define domain for distributions.
         xticks = self.ax.get_xticks()
         xmin, xmax = min(xticks), max(xticks)
-        #self.xdom = np.linspace(xmin, xmax, len(self.y)) 
         self.xdom = np.linspace(xmin, xmax, len(self.y)) 
-        #key2distr = {'normal': stats.norm, 'gamma':stats.gamma}
-        #distr_obj = key2distr[key]
     
     def describe_obs_distr(self):
         print('Mean {}'.format(np.mean(self.y))) 
@@ -59,44 +63,33 @@ class Fit_Distr(object):
         print('Skewness {}'.format(stats.skew(self.y))) 
         print('Kurtosis {}'.format(stats.kurtosis(self.y)))
 
-    def fit_normal(self):
-        mu, sd = stats.norm.fit(self.y)
-        y_theor = stats.norm.pdf(self.xdom, mu, sd)
-        self.ax.plot(
-          self.xdom, y_theor, ls='-', color='b', lw=3., marker='None',
-          label=r'Normal')
+    def make_fits(self):
+        #Based on example from:
+        #http://www.aizac.info/simple-check-of-a-sample-against-80-distributions/
+        pdfs = ['norm', 'exponweib', 'beta']
+        if all(self.y > 0.):
+            pdfs += ['gamma', 'lognorm']
+        
+        for pdf in pdfs:
+            
+            #Fit distribution and get most likely parameters.
+            pars = eval('scipy.stats.' + pdf + '.fit(self.y)')
+            
+            if not any([math.isnan(p) for p in pars]):
+                arg = ', '.join([str(val) for val in pars])
+                y_theor = eval(
+                  'scipy.stats.' + pdf + '.pdf(self.xdom, '+ arg + ')')
+     
+                #Compute and print goodness of fit KS test.
+                D, p = scipy.stats.kstest(self.y, pdf, args=pars)
+                print(pdf.ljust(18) + ('D: {}'.format(D).ljust(30))
+                      + ('p: {}'.format(p).ljust(45)))
 
-    def fit_beta(self):
-        a, b, c, d = stats.beta.fit(self.y)
-        y_theor = stats.beta.pdf(self.xdom, a, b, c, d)
-        self.ax.plot(
-          self.xdom, y_theor, ls='--', color='r', lw=3., marker='None',
-          label=r'Beta') 
-
-    def fit_gamma(self):
-        if all(self.y>0.):
-            a, b, c = stats.gamma.fit(self.y)
-            y_theor = stats.gamma.pdf(self.xdom, a, b, c)
-            self.ax.plot(
-              self.xdom, y_theor, ls='-.', color='g', lw=3., marker='None',
-              label=r'Gamma')
-
-    def fit_eweibull(self):
-        #Valid only if x>0?
-        a, b, c, d = stats.exponweib.fit(self.y)
-        y_theor = stats.exponweib.pdf(self.xdom, a, b, c, d)
-        self.ax.plot(
-          self.xdom, y_theor, ls=':', color='c', lw=3., marker='None',
-          label=r'Exp Weibull')        
-        #print(stats.chisquare(self.y, f_exp=y_theor))
-
-    def fit_lognorm(self):
-        if all(self.y>0.):
-            a, b, c = stats.lognorm.fit(abs(self.y))
-            y_theor = stats.lognorm.pdf(self.xdom, a, b, c)
-            self.ax.plot(
-              self.xdom, y_theor, ls=':', color='m', lw=3., marker='None',
-              label=r'Log normal')   
+                #For reasonable distributions, add curve to plot.
+                if D < 0.2:
+                    self.ax.plot(
+                      self.xdom, y_theor, ls=next(ls), color=next(c), lw=3.,
+                      label=pdf + ': p={:.3f}'.format(p))
 
     def make_legend(self):
         self.ax.legend(
@@ -111,11 +104,8 @@ class Fit_Distr(object):
         self.set_fig_frame()
         self.plot_histogram()
         self.describe_obs_distr()
-        self.fit_normal()
-        self.fit_beta()
-        self.fit_gamma()
-        self.fit_eweibull()
-        self.fit_lognorm()
+        self.make_fits()
+
         self.make_legend()
         self.manage_output()
         
