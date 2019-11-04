@@ -13,7 +13,8 @@ mpl.rcParams['mathtext.fontset'] = 'stix'
 mpl.rcParams['font.family'] = 'STIXGeneral'
 fs = 24.
 
-applic2label = {'simple_diff':r'$\Delta(\mathrm{IR})_{\mathrm{1~day}}$'}
+applic2label = {'simple_diff':r'$\Delta(\mathrm{IR})_{\mathrm{1~day}}$',
+                'log_ratio': r'$\mathrm{log}\ (R_{i+1}/R_i)$'}
 
 class Plot_Ir(object):
     """

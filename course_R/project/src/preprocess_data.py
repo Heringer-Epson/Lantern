@@ -70,5 +70,5 @@ class Preproc_Data(object):
     def run_preproc_data(self):
         self.load_data()
         self.prepare_data()
-        self.remove_spikes()
+        #self.remove_spikes()
         return self.df
