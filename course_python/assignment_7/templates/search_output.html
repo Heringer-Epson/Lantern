@@ -1,0 +1,20 @@
+<! doctype html>
+
+<html>
+    <body class="landing">
+	
+      <table border = 1>
+	<tr>
+	   <th> {{ obj.name }} </th>
+	   <td> {{ obj.status }} </td>
+	</tr>
+      </table>
+
+    <form action="{{ url_for('update_status', appliance=obj.name) }}" method='POST'>
+    Change appliance status:
+    <input type='submit' value='Yes', name='switch_status'>
+    <input type='submit' value='No', name='switch_status'>
+    </form>
+
+    </body>
+</html>

@@ -1,0 +1,17 @@
+<! doctype html>
+
+<html>
+    <head>
+    <title>Appliance manager app</title>
+    </head>
+    
+    <body class="landing">
+	<h3><a href="/listing" class="button big">List of appliances</a></h3>
+
+	<form action="{{ url_for('search_appliance') }}" method='POST'>
+	Search appliance: <input type='text' name='appliance_name'> 
+	<input type='submit' value='Status'>
+	</form>
+
+    </body>
+</html>

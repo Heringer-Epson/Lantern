@@ -1,0 +1,14 @@
+<! doctype html>
+
+<title> Our Magestic HTML Page ! </title>
+
+
+<ul>
+
+	{% for key, value in listing.items():%}
+
+        <li> {{ value.name + ': ' + value.status}} </li>
+
+	{% endfor  %}
+
+</ul>
