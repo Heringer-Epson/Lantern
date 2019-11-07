@@ -131,7 +131,116 @@ hist(y, freq=F)
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-#
 rm(list=ls())
 
+library(ISwR)
+summary(IgM)
+
+par(mfrow=c(1,2))
+boxplot(IgM, ylab='IgM', cex.bal=1.5)
+log_IgM = log(IgM)
+boxplot(log_IgM, ylab='log IgM', cex.lab=1.5)
+
+#Histograms
+par(mfrow=c(1,2))
+hist(IgM, freq=F, xlab='IgM', cex.lab=1.5)
+legend(legend=c('LogNormal distr.'), 'topright', lty=c(1), lwd=c(2), col='red')
+usr1=par('usr')
+
+hist(log_IgM, freq=F, xlab='log(IgM)', cex.lab=1.5, ylim=c(0, 0.9), main='Histogram of log(IgM)')
+legend(legend=c('Normal distr.'), 'topright', lty=c(1), lwd=c(2), col='red')
+
+mu = mean(log_IgM)
+sigma = sd(log_IgM)
+yrange = seq(min(log_IgM), max(log_IgM), 0.01)
+points(yrange, dnorm(yrange, mu, sigma), type='l', col='red', lwd=2)
+
+#Go back to first subplot.
+par(mfg=c(1,1), usr=usr1)
+xrange = seq(min(IgM), max(IgM), 0.01)
+points(xrange, dlnorm(xrange, mu, sigma), type='l', col='red', lwd=2)
+
+
+#Q-Q plots.
+par(mfrow=c(1,2))
+qqnorm(IgM)
+qqnorm(log_IgM)
+qrange = seq(-3,3, 0.1)
+points(qrange, sigma*qrange+mu, type='l', col='red', lwd=2)
+
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-#
 #Lectures 8
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-#
 rm(list=ls())
+
+methods('plot')
+getS3method('plot', 'histogram')
+
+#install.packages('fitdistrplus')
+library('fitdistrplus')
+
+data('groundbeef', package='fitdistrplus')
+str(groundbeef)
+
+serv = groundbeef$serving
+
+#Plot histogram and CDF
+plotdist(serv, histo=T, demp=T)
+
+#Cullen and Frey (Kurtosis vs square of skewness) graph
+descdist(serv, boot=1000)
+
+
+#Fit weibull distribution to the data.
+fw = fitdist(serv, 'weibull')
+class(fw)
+summary(fw)
+
+#Fit other distributions
+fg = fitdist(serv, 'gamma')
+fln = fitdist(serv, 'lnorm')
+
+par(mfrow=c(2,2))
+plot.legend <- c('Weibull', 'logNormal', 'gamma')
+denscomp(list(fw, fln, fg), legendtext=plot.legend)
+qqcomp(list(fw, fln, fg), legendtext=plot.legend)
+cdfcomp(list(fw, fln, fg), legendtext=plot.legend)
+ppcomp(list(fw, fln, fg), legendtext=plot.legend)
+
+#Different data.
+data('endosulfan', package='fitdistrplus')
+ATV <- endosulfan$ATV
+fendo.ln <- fitdist(ATV, 'lnorm')
+
+#install.packages('actuar')
+library('actuar')
+fendo.ll <- fitdist(ATV, 'llogis', start=list(shape=1, scale=500))
+fendo.P <- fitdist(ATV, 'pareto', start=list(shape=1, scale=500))
+fendo.B <- fitdist(ATV, 'burr', start=list(shape1=0.3, shape2=1, rate=1))
+
+cdfcomp(list(fendo.ln, fendo.ll, fendo.P, fendo.B), lwd=2, xlogscale=T,
+        ylogscale=T, legendtext=c('logNormal', 'loglogistic', 'Pareto', 'Burr'))
+quantile(fendo.B, probs=0.05)
+quantile(ATV, probs=0.5)
+gofstat(list(fendo.ln, fendo.ll, fendo.P, fendo.B),
+        fitnames=c('lnorm', 'llogis', 'Pareto', 'Burr'))
+
+rm(list=ls())
+
+#Bootstraping.
+n=100
+x = rnorm(n, 5, 1)
+
+mu=mean(x)
+cat('Sample mean, mu=', mu, '\n', sep='')
+cat('Theoretical standard error of mu=', sd(x)/sqrt(n), '\n', sep='')
+
+NumIters=1000
+MeanEst = array(0, NumIters)
+
+for (i in 1:NumIters){
+  MeanEst[i] = mean(sample(x, replace=T))
+}
+cat('Bootstrapped Standard Error of mu=', sd(MeanEst), '\n', sep='')
+
+hist(MeanEst, freq=F)
+xrange = seq(min(MeanEst), max(MeanEst), 0.01)
+points(xrange, dnorm(xrange, mu, sd(x)/sqrt(n)), type='l', lwd=2, col='red')
