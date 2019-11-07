@@ -1,3 +1,4 @@
+import pandas as pd
 from appliances import Appliance_Item
 
 catalog = {'Blender': Appliance_Item('Blender', 'On'),
@@ -7,3 +8,11 @@ catalog = {'Blender': Appliance_Item('Blender', 'On'),
            'TV': Appliance_Item('TV', 'On'),
            'Computer': Appliance_Item('Computer', 'On'),
            'Alarm': Appliance_Item('Alarm', 'Off'),}
+
+
+'''
+catalog = pd.DataFrame([['Blender', 'On'],
+                        ['Dishwasher', 'Off'],
+                        ['Fridge', 'Off'],
+                        ], columns=['name', 'status'])
+'''

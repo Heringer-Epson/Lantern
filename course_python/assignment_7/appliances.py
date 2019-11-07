@@ -1,3 +1,4 @@
+import pandas as pd
 class Appliance_Item(object):
     
     status_summary = {}
@@ -33,6 +34,8 @@ class Appliance_Item(object):
                 self.status = 'Off'
             elif self.status.casefold() == 'off':
                 self.status = 'On'        
+            Appliance_Item.status_summary[self.name] = self.status
+
 
     @property
     def name(self):
@@ -56,4 +59,3 @@ class Appliance_Item(object):
             self._status = 'Off'
         else:
             ValueError('Status must be "On" or "Off".')
-        

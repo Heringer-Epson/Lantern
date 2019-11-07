@@ -5,10 +5,22 @@
 
 <ul>
 
-	{% for key, value in listing.items():%}
+    <table border = 1>
+    {% for name, status in dict_on.items():%}
+	<tr>
+	   <th> {{ name }} </th>
+	   <td> {{ status }} </td>
+	</tr>
+    {% endfor  %}
+    </table> <br>
 
-        <li> {{ value.name + ': ' + value.status}} </li>
-
-	{% endfor  %}
+    <table border = 1>
+    {% for name, status in dict_off.items():%}
+	<tr>
+	   <th> {{ name }} </th>
+	   <td> {{ status }} </td>
+	</tr>
+    {% endfor  %}
+    </table>
 
 </ul>
