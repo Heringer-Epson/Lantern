@@ -2,12 +2,9 @@ import numpy as np
 import pandas as pd
 from flask import Flask, request, render_template
 from appliances import Appliance_Item
+from catalog import catalog
 
 app = Flask(__name__)
-
-catalog = {'Blender': Appliance_Item('Blender', 'On'),
-           'Dishwasher': Appliance_Item('Dishwasher', 'Off'),
-           'Fridge': Appliance_Item('Fridge', 'On')}
 
 @app.route('/')
 @app.route('/index')
@@ -22,8 +19,12 @@ def listing():
 def search_appliance():
     if request.method=='POST':
         search_name = request.form.get('appliance_name')
-        appliance_obj = catalog[search_name]
-        return render_template('search_output.html', obj=appliance_obj)
+        try:
+            appliance_obj = catalog[search_name]
+            return render_template('search_output.html', obj=appliance_obj)
+        except:
+            return """<h1> "{}" not found, please try again. </h1>
+                   """.format(search_name)
 
 @app.route('/update_status/<appliance>', methods=['POST', 'GET'])
 def update_status(appliance):
