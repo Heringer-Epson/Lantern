@@ -4,10 +4,10 @@ import os
 
 from initialize_run import Init_Run
 from preprocess_data import Preproc_Data
-from transform_data import Transform_Data
-from plot_ir import Plot_Ir
 from fit_distributions import Fit_Distr
-
+from plot_ir import Plot_Ir
+from plot_structure import Plot_Structure
+from plot_std_ratio import Plot_Std
 
 class Master(object):
     """
@@ -35,14 +35,18 @@ class Master(object):
     None
 
     """
-    def __init__(self, tenor='1m', curr='USD', t_ival=None, incr=2,
-                 application='simple_diff'):
+    def __init__(self, curr='USD', application='simple_diff', t_ival=None):
        
-        outdir = Init_Run(tenor, curr, incr, application).run_init()
-        data = Preproc_Data(tenor, curr, t_ival).run_preproc_data()
-        data = Transform_Data(data, incr, application).run_transform_data()
-        Plot_Ir(data, application, outdir).make_plot()
-        Fit_Distr(data, outdir).run_fitting()
+        #incr = [1, 25, 130, 261] #[1d, 1m, 6m, 1yr]
+        incr = [1, 25] #[1d, 1m, 6m, 1yr]
+        tenor = [1, 3, 12]
+        outdir = Init_Run(curr, application).run_init()
+        
+        M = Preproc_Data(curr, t_ival, application, tenor, incr).run_preproc_data()
+        Fit_Distr(M, tenor, incr, outdir).run_fitting()
+        #Plot_Ir(M, application, tenor, incr, outdir).make_plot()
+        #Plot_Structure(M, tenor, incr, outdir).make_plot()
+        #Plot_Std(M, tenor, incr, outdir).make_plot()
         
         #print(data.head(n=10))
         
@@ -51,5 +55,5 @@ class Master(object):
 
        
 if __name__ == '__main__':
-    Master(t_ival=['2017/01/01', '2018/06/01'])
+    Master(application='simple_diff', t_ival=['2010/01/01', '2016/01/01'])
     #Master(t_ival=['2012/01/01', '2018/06/01'], application='log_ratio')

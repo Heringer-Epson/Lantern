@@ -26,14 +26,23 @@ class Fit_Distr(object):
     TBW.
     """    
     
-    def __init__(self, df, outdir):
-        self.y = df.ir_transf.values[1:] #First value is always nan.
+    def __init__(self, M, tenor, incr, outdir):
+        self.M = M
+        self.tenor = tenor
+        self.incr = incr
         self.outdir = outdir
 
-        self.fig, self.ax = plt.subplots(1,1, figsize=(10,10))
+        self.fig = None
+        self.ax = None
         self.xdom = None
+        self.y = None
+
+    def get_plotting_values(self, key):
+        self.y = self.M[key]['ir_transf_mean'].values
                         
     def set_fig_frame(self):
+
+        self.fig, self.ax = plt.subplots(1,1, figsize=(10,10))
  
         self.ax.tick_params(axis='y', which='major', labelsize=fs, pad=8)      
         self.ax.tick_params(axis='x', which='major', labelsize=fs, pad=8)
@@ -49,7 +58,7 @@ class Fit_Distr(object):
 
     def plot_histogram(self):
         aux = self.ax.hist(
-          self.y, bins=30, normed=True, histtype='stepfilled', alpha=0.7,
+          self.y, bins=40, normed=True, histtype='stepfilled', alpha=0.7,
           color='grey')
         
         #Use range from plotted histogram to define domain for distributions.
@@ -96,17 +105,21 @@ class Fit_Distr(object):
           frameon=False, fontsize=fs, labelspacing=.1, numpoints=1, loc=2,
           handlelength=1.5)        
 
-    def manage_output(self):
-        fpath = os.path.join(self.outdir, 'Fig_distributions.pdf')
-        plt.savefig(fpath, format='pdf')
+    def manage_output(self, key):
+        fname = 'distributions/Fig_distr_{}.pdf'.format(key)
+        plt.savefig(os.path.join(self.outdir, fname), format='pdf')
         
     def run_fitting(self):
-        self.set_fig_frame()
-        self.plot_histogram()
-        self.describe_obs_distr()
-        self.make_fits()
-
-        self.make_legend()
-        self.manage_output()
-        
+        for tenor in self.tenor:
+            for incr in self.incr:
+                key = '{}m_{}d'.format(str(tenor), str(incr))                
+                self.get_plotting_values(key)
+                self.set_fig_frame()
+                self.plot_histogram()
+                self.describe_obs_distr()
+                self.make_fits()
+                self.make_legend()
+                self.manage_output(key)
+                plt.close()
+            
         
