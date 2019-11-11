@@ -74,12 +74,13 @@ class Preproc_Data(object):
         #Do not include first row, it contains NaN after transformation.
         df = df.iloc[1:]
         group_index = np.arange(len(df))//incr
-        aggregator = {'date':'first', 'ir':[np.mean, np.std],
+        aggregator = {'date':['first', 'last'], 'ir':[np.mean, np.std],
                       'ir_transf':[np.mean, np.std]}
         #Compute averaged quantities and rename columns to reflect that.
         df = df.groupby(group_index).agg(aggregator)
         df.columns = [
-          'first_date', 'ir_mean', 'ir_std', 'ir_transf_mean', 'ir_transf_std']
+          'last_date', 'first_date', 'ir_mean', 'ir_std', 'ir_transf_mean',
+          'ir_transf_std']
         df.reindex(columns=sorted(df.columns))
         return df
 

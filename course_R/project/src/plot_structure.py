@@ -15,8 +15,21 @@ mpl.rcParams['mathtext.fontset'] = 'stix'
 mpl.rcParams['font.family'] = 'STIXGeneral'
 fs = 24.
 
-c = ['#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33',
+c = ['#377eb8','#4daf4a','#984ea3','#ff7f00',
            '#a65628','#f781bf']
+
+def get_label(first_dates, last_dates):
+
+    first_years = first_dates.astype('datetime64[Y]').astype(int) + 1970
+    first_months = first_dates.astype('datetime64[M]').astype(int) % 12 + 1
+    last_years = last_dates.astype('datetime64[Y]').astype(int) + 1970
+    last_months = last_dates.astype('datetime64[M]').astype(int) % 12 + 1
+
+    N = len(first_years)
+    return [
+      str(first_years[i]) + '-' + str(first_months[i]) + ' to ' +
+      str(last_years[i]) + '-' + str(last_months[i]) for i in range(N)]
+    
 
 class Plot_Structure(object):
     """
@@ -90,20 +103,21 @@ class Plot_Structure(object):
     def add_yearly_structures(self):
         #Use the collection of IRs averaged over years.
         #One line per yearly average.
-        yearly_IR = [self.M[str(tenor) + 'm_261d'].ir_mean.values
+        yearly_IR = [self.M[str(tenor) + 'm_253d'].ir_mean.values
                      for tenor in self.tenor]
         y_list = list(map(np.array, zip(*yearly_IR)))
 
-        yearly_IR_std = [self.M[str(tenor) + 'm_261d'].ir_std.values
+        yearly_IR_std = [self.M[str(tenor) + 'm_253d'].ir_std.values
                          for tenor in self.tenor]
         yerr_list = list(map(np.array, zip(*yearly_IR_std)))
 
-        yearly_label = [date for date in self.M['1m_261d'].first_date.values]
+        labels = get_label(self.M['1m_253d'].first_date.values,
+                           self.M['1m_253d'].last_date.values)
 
         for i, (IR, IRerr) in enumerate(zip(y_list, yerr_list)):            
             self.ax.errorbar(
               self.tenor, IR, yerr=IRerr, ls='--', lw=4., marker='^',
-              markersize=12., color=c[i])
+              markersize=12., color=c[i], label=labels[i])
 
     def add_average_structures(self):
         IR_avg = [np.mean(self.M[str(tenor) + 'm_1d'].ir_mean.values)
@@ -115,16 +129,12 @@ class Plot_Structure(object):
           markersize=12., color='k')
 
     def make_legend(self):
-        #title = 'Term Structure: ({}, {}-day incr)'.format(self.curr, str(self.incr))
-        self.ax.plot(
-          [np.nan], [np.nan], ls='--', lw=4., color='gray',
-          marker='^', markersize=12.,  label=r'Yearly')
-        self.ax.plot(
-          [np.nan], [np.nan], ls='-', marker='None', lw=1., color='gray',
-          alpha=0.5, label=r'Monthly')
         self.ax.plot(
           [np.nan], [np.nan], ls='-', marker='s', markersize=12., lw=4.,
-          color='k', label=r'Average')        
+          color='k', label=r'All Data')   
+        self.ax.plot(
+          [np.nan], [np.nan], ls='-', marker='None', lw=1., color='gray',
+          alpha=0.5, label=r'Monthly')     
         self.ax.legend(
           frameon=False, fontsize=fs, labelspacing=.1, numpoints=1, loc=2,
           ncol=2, handlelength=1.5, title_fontsize=fs)         

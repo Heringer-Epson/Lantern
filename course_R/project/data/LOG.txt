@@ -1,32 +1,16 @@
 #Log for the data files used in this project.
+#Data was collected on Nov. 11th, 2019
 
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-LIBOR=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 Source: https://fred.stlouisfed.org
 search for the "LIBOR" keyword and select time period on the left tab.
 
-FILE: LIBOR_1m_USD.csv
-ORIGINAL NAME: USD1MTD156N.csv
-https://fred.stlouisfed.org/series/USD1MTD156N
+FILE: LIBOR_Xm_USD.csv
+ORIGINAL NAME: USDXMTD156N.csv
+https://fred.stlouisfed.org/series/USDXMTD156N
 
-FILE: LIBOR_1m_CAD.csv
-ORIGINAL NAME: CAD1MTD156N.csv
-https://fred.stlouisfed.org/series/CAD1MTD156N
-
-FILE: LIBOR_3m_USD.csv
-ORIGINAL NAME: USD3MTD156N.csv
-https://fred.stlouisfed.org/series/USD3MTD156N
-
-FILE: LIBOR_3m_CAD.csv
-ORIGINAL NAME: CAD3MTD156N.csv
-https://fred.stlouisfed.org/series/CAD3MTD156N
-
-FILE: LIBOR_12m_USD.csv
-ORIGINAL NAME: USD12MD156N.csv
-https://fred.stlouisfed.org/series/USD12MD156N
-
-FILE: LIBOR_12m_CAD.csv
-ORIGINAL NAME: CAD12MD156N.csv
-https://fred.stlouisfed.org/series/CAD12MD156N
-
+FILE: LIBOR_Xm_CAD.csv
+ORIGINAL NAME: CADXMTD156N.csv
+https://fred.stlouisfed.org/series/CADXMTD156N
 
 

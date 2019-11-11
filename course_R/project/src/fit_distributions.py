@@ -21,6 +21,10 @@ c = cycle(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33',
            '#a65628','#f781bf'])
 ls = cycle(['-', '-.', '--', ':'])
 
+pdf2color = {'norm':'#e41a1c', 'exponweib':'#377eb8', 'beta':'#4daf4a',
+             'gamma':'#984ea3', 'lognorm':'#ff7f00'}
+pdf2ls = {'norm':'-', 'exponweib':'-.', 'beta':'--', 'gamma':':', 'lognorm':'-.'}
+
 class Fit_Distr(object):
     """
     TBW.
@@ -36,33 +40,28 @@ class Fit_Distr(object):
         self.ax = None
         self.xdom = None
         self.y = None
-
-    def get_plotting_values(self, key):
-        self.y = self.M[key]['ir_transf_mean'].values
-                        
-    def set_fig_frame(self):
-
-        self.fig, self.ax = plt.subplots(1,1, figsize=(10,10))
+                       
+    def set_fig_frame(self, ax, qtty):
  
-        self.ax.tick_params(axis='y', which='major', labelsize=fs, pad=8)      
-        self.ax.tick_params(axis='x', which='major', labelsize=fs, pad=8)
-        self.ax.tick_params('both', length=12, width=2., which='major',
+        ax.tick_params(axis='y', which='major', labelsize=fs, pad=8)      
+        ax.tick_params(axis='x', which='major', labelsize=fs, pad=8)
+        ax.tick_params('both', length=12, width=2., which='major',
                              direction='in', right=True, top=True)
-        self.ax.tick_params('both', length=6, width=2., which='minor',
+        ax.tick_params('both', length=6, width=2., which='minor',
                              direction='in', right=True, top=True) 
-        
-        #self.ax.yaxis.set_minor_locator(MultipleLocator(.1))
-        #self.ax.yaxis.set_major_locator(MultipleLocator(.5))
-        self.ax.set_ylabel(r'Normalized Count', fontsize=fs)
-        self.ax.set_xlabel(r'Transformed IR', fontsize=fs)
+        ax.set_ylabel(r'Normalized Count', fontsize=fs)
+        ax.set_xlabel(qtty, fontsize=fs)
 
-    def plot_histogram(self):
-        aux = self.ax.hist(
-          self.y, bins=40, normed=True, histtype='stepfilled', alpha=0.7,
+    def get_plotting_values(self, key, qtty):
+        self.y = self.M[key][qtty + '_mean'].values
+
+    def plot_histogram(self, ax):
+        aux = ax.hist(
+          self.y, bins=40, density=True, histtype='stepfilled', alpha=0.7,
           color='grey')
         
         #Use range from plotted histogram to define domain for distributions.
-        xticks = self.ax.get_xticks()
+        xticks = ax.get_xticks()
         xmin, xmax = min(xticks), max(xticks)
         self.xdom = np.linspace(xmin, xmax, len(self.y)) 
     
@@ -72,7 +71,7 @@ class Fit_Distr(object):
         print('Skewness {}'.format(stats.skew(self.y))) 
         print('Kurtosis {}'.format(stats.kurtosis(self.y)))
 
-    def make_fits(self):
+    def make_fits(self, ax):
         #Based on example from:
         #http://www.aizac.info/simple-check-of-a-sample-against-80-distributions/
         pdfs = ['norm', 'exponweib', 'beta']
@@ -95,13 +94,13 @@ class Fit_Distr(object):
                       + ('p: {}'.format(p).ljust(45)))
 
                 #For reasonable distributions, add curve to plot.
-                if D < 0.2:
-                    self.ax.plot(
-                      self.xdom, y_theor, ls=next(ls), color=next(c), lw=3.,
-                      label=pdf + ': p={:.3f}'.format(p))
+                if D < 0.5:
+                    ax.plot(
+                      self.xdom, y_theor, ls=pdf2ls[pdf], color=pdf2color[pdf],
+                      lw=3., label=pdf + ': p={:.3f}'.format(p))
 
-    def make_legend(self):
-        self.ax.legend(
+    def make_legend(self, ax):
+        ax.legend(
           frameon=False, fontsize=fs, labelspacing=.1, numpoints=1, loc=2,
           handlelength=1.5)        
 
@@ -112,13 +111,16 @@ class Fit_Distr(object):
     def run_fitting(self):
         for tenor in self.tenor:
             for incr in self.incr:
-                key = '{}m_{}d'.format(str(tenor), str(incr))                
-                self.get_plotting_values(key)
-                self.set_fig_frame()
-                self.plot_histogram()
-                self.describe_obs_distr()
-                self.make_fits()
-                self.make_legend()
+                key = '{}m_{}d'.format(str(tenor), str(incr))
+                fig, (ax1, ax2) = plt.subplots(1,2, figsize=(12,8))
+                plt.subplots_adjust(wspace=.4)
+                for ax, qtty in zip([ax1, ax2], ['ir', 'ir_transf']):
+                    self.set_fig_frame(ax, qtty)                
+                    self.get_plotting_values(key, qtty)
+                    self.plot_histogram(ax)
+                    #self.describe_obs_distr()
+                    self.make_fits(ax)
+                    self.make_legend(ax)
                 self.manage_output(key)
                 plt.close()
             
