@@ -42,8 +42,8 @@ class Master(object):
     """
     def __init__(self, curr='USD', application='simple_diff', t_ival=None):
        
-        incr = [1] #[1d, 1m, 6m, 1yr]
-        tenor = [1, 2, 3]
+        incr = [1, 25] #[1d, 1m, 6m, 1yr]
+        tenor = [1, 2, 3, 6, 12]
         
         #incr = [1, 25] #[1d, 1m, 6m, 1yr]
         #tenor = [1, 2, 3, 6, 12]
@@ -56,16 +56,16 @@ class Master(object):
         #Ir_Std(M, tenor, incr, outdir, 'ir').make_plot() 
         #Ir_Std(M, tenor, incr, outdir, 'ir_transf').make_plot() 
         #Plot_Corr(M, curr, tenor, outdir).make_plot()
-        #Plot_Expvar(M, tenor, outdir).make_plot() 
+        Plot_Expvar(M, tenor, outdir).make_plot() 
         #Plot_Pca(M, curr, tenor, outdir).make_plot()
         #fit_coeffs = Fit_Vasicek(M, tenor, incr, outdir).make_fit() 
         
-        fit_coeffs = {'1m_1d': [266.7572, -0.000127, 0.04698],
-                      '2m_1d': [231.8632, -0.000179, 0.05076],
-                      '3m_1d': [192.9194, -0.000235, 0.05571]}
+        #fit_coeffs = {'1m_1d': [266.7572, -0.000127, 0.04698],
+        #              '2m_1d': [231.8632, -0.000179, 0.05076],
+        #              '3m_1d': [192.9194, -0.000235, 0.05571]}
 
         
-        Compute_Simulation(M, application, tenor, incr, fit_coeffs, outdir).make_plot() 
+        #Compute_Simulation(M, application, tenor, incr, fit_coeffs, outdir).make_plot() 
        
 if __name__ == '__main__':
     Master(application='simple_diff', t_ival=['2010/01/01', '2016/01/01'])

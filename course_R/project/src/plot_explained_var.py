@@ -33,7 +33,7 @@ class Plot_Expvar(object):
         self.tenor = tenor
         self.outdir = outdir
         
-        self.X, = {}
+        self.X = {}
         self.X['1'], self.X['25'] = [], []
         
         self.incr = [1,25]
@@ -43,9 +43,10 @@ class Plot_Expvar(object):
         for incr in self.incr:
             for tenor in self.tenor:
                 key = '{}m_{}d'.format(str(tenor), str(incr))
+                print(self.M[key]['ir_transf_mean'].values)
                 self.X[str(incr)].append(self.M[key]['ir_transf_mean'].values)
             self.X[str(incr)] = np.transpose(self.X[str(incr)])
-
+        #print(self.X[str(incr)])
     def set_fig_frame(self):
         plt.subplots_adjust(left=0.15, wspace=0.1)
 
